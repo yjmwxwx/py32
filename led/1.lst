@@ -1,0 +1,58 @@
+ARM GAS  1.s 			page 1
+
+
+   1              		.thumb
+   2              		.syntax unified
+   3              	vectors:
+   4 0000 00100020 		.word zhanding
+   5 0004 09000000 		.word kaishi + 1
+   6              		.equ zhanding, 0x20001000
+   7              	
+   8              	kaishi:
+   9              	__kai_pa_shi_zhong:	
+  10 0008 0748     		ldr r0, = 0x40021034
+  11 000a 0121     		movs r1, # 1
+  12 000c 0160     		str r1, [r0]
+  13              	__pa_she_zhi:	
+  14 000e 0748     		ldr r0, = 0x50000000
+  15 0010 0749     		ldr r1, = 0xebfffffD
+  16 0012 0160     		str r1, [r0]
+  17              	
+  18              	ting:
+  19 0014 0121     		movs r1, # 1
+  20              	__led_kai:	
+  21 0016 8161     		str r1, [r0, # 0x18]
+  22 0018 064A     		ldr r2, = 0xfffff
+  23              	__led_kai_yanshi:
+  24 001a 013A     		subs r2, r2, # 1
+  25 001c FDD1     		bne __led_kai_yanshi
+  26              	__led_guan:	
+  27 001e 8162     		str r1, [r0, # 0x28]
+  28 0020 044A     		ldr r2, = 0xfffff
+  29              	__led_guan_yanshi:
+  30 0022 013A     		subs r2, r2, # 1
+  31 0024 FDD1     		bne __led_guan_yanshi
+  32 0026 F5E73410 		b ting
+  32      02400000 
+  32      0050FDFF 
+  32      FFEBFFFF 
+  32      0F00
+ARM GAS  1.s 			page 2
+
+
+DEFINED SYMBOLS
+                 1.s:3      .text:0000000000000000 vectors
+                            *ABS*:0000000020001000 zhanding
+                 1.s:8      .text:0000000000000008 kaishi
+                 1.s:9      .text:0000000000000008 __kai_pa_shi_zhong
+                            .text:0000000000000000 $d
+                 1.s:10     .text:0000000000000008 $t
+                 1.s:13     .text:000000000000000e __pa_she_zhi
+                 1.s:18     .text:0000000000000014 ting
+                 1.s:20     .text:0000000000000016 __led_kai
+                 1.s:23     .text:000000000000001a __led_kai_yanshi
+                 1.s:26     .text:000000000000001e __led_guan
+                 1.s:29     .text:0000000000000022 __led_guan_yanshi
+                 1.s:32     .text:0000000000000028 $d
+
+NO UNDEFINED SYMBOLS
