@@ -14,8 +14,9 @@ __pa_she_zhi:
 	ldr r0, = 0x50000000
 	ldr r1, = 0xebfffffD
 	str r1, [r0]
-	movs r1, # 1
+
 ting:
+	movs r1, # 1
 __led_kai:	
 	str r1, [r0, # 0x18]
 	ldr r2, = 0xfffff
