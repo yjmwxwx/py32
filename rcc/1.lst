@@ -65,8 +65,8 @@ ARM GAS  1.s 			page 1
   59              	_start:
   60              	shizhong:
   61 00c0 164A     		ldr r2, = 0x40022000   @FLASH访问控制
-  62 00c2 0121     		movs r1, # 1
-  63 00c4 1160     		str r1, [r2]           @flash 读操作有 1 个等待状态
+  62 00c2 0021     		movs r1, # 0
+  63 00c4 1160     		str r1, [r2]          @0:flash没等待，1:flash等待
   64 00c6 1648     		ldr r0, = 0x40021000 @ rcc
   65 00c8 1649     		ldr r1, = 0x20008
   66 00ca 0161     		str r1, [r0, # 0x10]	@外部晶振选择

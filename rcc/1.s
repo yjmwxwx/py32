@@ -59,8 +59,8 @@ vectors:
 _start:
 shizhong:
 	ldr r2, = 0x40022000   @FLASH访问控制
-	movs r1, # 1
-	str r1, [r2]           @flash 读操作有 1 个等待状态
+	movs r1, # 0
+	str r1, [r2]          @0:flash没等待，1:flash等待
 	ldr r0, = 0x40021000 @ rcc
 	ldr r1, = 0x20008
 	str r1, [r0, # 0x10]	@外部晶振选择
