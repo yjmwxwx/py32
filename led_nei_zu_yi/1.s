@@ -1,6 +1,6 @@
 	@@ 单片机PY32F002AF15P6TU
-	@数码管电池內阻仪器
-	@时间：2023-05-15
+	@定时器
+	@时间：2023-04-16
 	@编译器：ARM-NONE-EABI
 	.thumb
 	.syntax unified
@@ -147,14 +147,78 @@ __io_she_zhi:
 	ldr r1, = 0x0c000000
 	str r1, [r0, # 0x08]
 	ldr r0, = 0x50000400
-	ldr r1, = 0xffffffbf
+	ldr r1, = 0xffffffbd
 	str r1, [r0]
 	movs r1, # 0xc0
 	str r1, [r0, # 0x08]
 	ldr r1, = 0x1000
 	str r1, [r0, # 0x20]
 
-		
+
+	ldr r0, = 0x40010000
+	movs r1, # 0x2c
+	str r1, [r0, # 0x1c]
+
+	ldr r0, = 0x40020000
+	ldr r1, = 0x40012c38	@外设地址
+	str r1, [r0, # 0x10]
+	ldr r1, =  zheng_xian_1khz @ 储存器地址
+	str r1, [r0, # 0x14]
+	ldr r1, = 200		@传输数量
+	str r1, [r0, # 0x0c]
+	ldr r1, = 0x31b1  	@传输模式
+	str r1, [r0, # 0x08]
+
+
+	ldr r0, = 0x40012c00 @ tim1_cr1
+	movs r1, # 0
+	str r1, [r0, # 0x28] @ psc
+	ldr r1, = 249
+	str r1, [r0, # 0x2c] @ ARR
+	@	movs r1, # 0x20
+	@	str r1, [r0, # 0x04] @ TRGO
+	ldr r1, = 0x6800
+	str r1, [r0, # 0x18] @ ccmr1  CC2
+	ldr r1, = 0x10    @  CC3
+	str r1, [r0, # 0x20] @ ccer
+	ldr r1, = 0x8000
+	str r1, [r0, # 0x44] @ BDTR
+	ldr r1, = 0x400 @ CC3 DMA
+	str r1, [r0, # 0x0c] @ DIER
+	ldr r1, = 100
+	str r1, [r0, # 0x38]
+	ldr r1, = 0x81
+	str r1, [r0]
+
+	@ adc dma
+	ldr r0, = 0x40020000
+	ldr r1, = 0x40012440	@外设地址
+	str r1, [r0, # 0x24]
+	ldr r1, = 0x20000100	@储存器地址
+	str r1, [r0, # 0x28]
+	ldr r1, = 1000		@传输数量
+	str r1, [r0, # 0x20]
+	ldr r1, = 0x35a1 @  0x583        @ 5a1	@传输模式
+	str r1, [r0, # 0x1c]
+_adcchushihua:
+	ldr r0, = 0x40012400  @ adc基地址
+	ldr r1, = 0x80000000
+	str r1, [r0, # 0x08]  @ ADC 控制寄存器 (ADC_CR)  @adc校准
+_dengadcjiaozhun:
+	ldr r1, [r0, # 0x08]
+	movs r1, r1
+	bmi _dengadcjiaozhun   @ 等ADC校准
+_tongdaoxuanze:
+	movs r1, # 0x03
+	str r1, [r0, # 0x28]    @ 通道选择寄存器 (ADC_CHSELR)
+	ldr r1, = 0x2003         @连续0x2003 @触发0x8c3 @ 0xc43         @TIM3 0x8c3 @0x2003 @0x8c3
+	str r1, [r0, # 0x0c]    @ 配置寄存器 1 (ADC_CFGR1)
+	movs r1, # 0
+	str r1, [r0, # 0x14]    @ ADC 采样时间寄存器 (ADC_SMPR)
+	ldr r1, = 0x05         @ 开始转换
+	str r1, [r0, # 0x08]    @ 控制寄存器 (ADC_CR)
+	str r1, [r0, # 0x08]
+
 
 spi_chushihua:
 	ldr r0, = 0x40013000
