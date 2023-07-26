@@ -1,6 +1,6 @@
 	@@ 单片机PY32F002AF15P6TU
-	@定时器
-	@时间：2023-04-16
+	@电池內阻测试仪
+	@时间：2023-07-26
 	@编译器：ARM-NONE-EABI
 	.thumb
 	.syntax unified
@@ -293,7 +293,18 @@ __anjian2_fanhui:
 	.ltorg
 	
 __anjian2:
-	movs r0, # 2
+	ldr r2, = jiaodu
+	ldr r0, = shangbi_r
+	ldr r1, = shangbi_i
+	ldr r0, [r0]
+	ldr r1, [r1]
+	bl __atan2_ji_suan
+	ldr r3, = 3276
+	asrs r0, r0, # 15
+	muls r0, r0, r3
+	asrs r0, r0, # 15
+	str r0, [r2]
+	@movs r0, # 2
 	movs r1, # 0xff
 	bl _zhuanshumaguanma
 	bl _xieshumaguan
@@ -332,7 +343,118 @@ ting:
 	bl _xieshumaguan
 	b ting
 	
+__atan2_ji_suan:					@jt
+	@入口R0=实部，R1=虚部，结果=R0
+	push {r2-r7,lr}
+	mov r2, r8
+	push {r2}
+	ldr r3, = cordic_yong_cos_sin
+	movs r2, # 10
+	muls r0, r0, r2
+	muls r1, r1, r2
+	movs r2, # 0
+	mov r8, r2
+	ldr r4, = 9000
+	lsls r4, r4, # 15
+__cordic_atan2_xun_huan:
+__du_cos_sin:
+	ldr r5, [r3]	@cos
+	adds r3, r3, # 4
+	mov r7, r5
+	ldr r6, [r3]	@sin
+	adds r3, r3, # 4
+	mov r2, r6
+	muls r5, r5, r0         @x*cos
+	muls r2, r2, r0         @x*sin
+	muls r6, r6, r1         @y*sin
+	muls r7, r7, r1         @y*cos
+	movs r1, r1
+	bpl __ni_shi_zhen_zhuan
+__shun_shi_zhen_zhuan:
+	subs r5, r5, r6
+	adds r7, r7, r2
+	mov r6, r8
+	adds r6, r6, r4
+	mov r8, r6
+	b __xuan_zhuan_wan
+__ni_shi_zhen_zhuan:
+	adds r5, r5, r6
+	subs r7, r7, r2
+	mov r6, r8
+	subs r6, r6, r4
+	mov r8, r6
+__xuan_zhuan_wan:
+	ldr r6, = cordic_yong_cos_sin
+	movs r2, # 32
+	lsls r2, r2, # 2
+	adds r6, r6, r2
+	asrs r5, r5, # 14
+	asrs r7, r7, # 14
+	mov r0, r5
+	mov r1, r7
+	lsrs r4, r4, # 1	@旋转
+	cmp r3,	r6
+	bne __cordic_atan2_xun_huan
+	mov r0, r8
+	mvns r0, r0
+	adds r0, r0, # 1
+	@	asrs r0, r0, # 15      @除32768等于角度
+	pop {r2}
+	mov r8, r2
+	pop {r2-r7,pc}
+	.ltorg
+__suan_atan2:
+	@入口R0=实部，R1=虚部
+	@出口R0=角度
+	push {r2-r6,lr}
+	ldr r6, = atan_biao
+	movs r2, # 0
+	mov r3, r2
+	movs r0, r0
+	bpl __panduan_xubu
+	ldr r2, = 5898240
+	mvns r0, r0
+	mvns r1, r1
+	adds r0, r0, # 1
+	adds r1, r1, # 1
+__panduan_xubu:
+	movs r1, r1
+	bpl __suan_atan2_xunhuan
+	ldr r2, = 11796480
+__suan_atan2_xunhuan:
+	movs r1, r1
+	bpl __atan2_zhengzhuan
+	mov r4, r0	@x
+	mov r5, r1	@y
+	asrs r5, r5, r3
+	asrs r4, r4, r3
+	subs r0, r0, r5
+	adds r1, r1, r4
+	mov r4, r3
+	lsls r4, r4, # 2
+	ldr r4, [r6, r4]
+	subs r2, r2, r4
+	b __atan2_xuanzhuan
+__atan2_zhengzhuan:
+	mov r4, r0	@x
+	mov r5, r1	@y
+	asrs r5, r5, r3
+	asrs r4, r4, r3
+	adds r0, r0, r5
+	subs r1, r1, r4
+	mov r4, r3
+	lsls r4, r4, # 2
+	ldr r4, [r6, r4]
+	adds r2, r2, r4
+__atan2_xuanzhuan:
+	adds r3, r3, # 1
+	cmp r3, # 21
+	bne __suan_atan2_xunhuan
+	mov r1, r0
+	mov r0,r2
+	pop {r2-r6,pc}
 
+	
 __xianshi_neizu:
 	push {r0-r2,lr}
 	ldr r0, = liangcheng
@@ -1811,11 +1933,16 @@ __suan_dft:
 	ldr r0, = liangcheng
 	ldr r2, = 0x50000400
 	ldr r3, [r0]
-	ldr r0, [r2, # 0x14]
-	ldr r1, = 0xffff
-	ands r0, r0, r1
-	orrs r0, r0, r3
-	str r0, [r2, # 0x14]
+	cmp r3, # 1
+	beq __haoou_dang
+__ou_dang:	
+	movs r3, # 1
+	lsls r3, r3, # 16
+	str r3, [r2, # 0x18]
+	b __systick_fanhui
+__haoou_dang:	
+	movs r3, # 1
+	str r3, [r2, # 0x18]
 	
 __systick_fanhui:
 	ldr r0, = 0xe0000d04
@@ -1835,6 +1962,7 @@ aaa:
 	.equ lvboqizhizhen1,            0x20000c60
 	.equ lvboqihuanchong1,          0x20000c68
 
+	.equ jiaodu,			0x20000fc8
 	.equ liangcheng,		0x20000fcc
 	.equ z,				0x20000fd0
 	.equ jishu,			0x20000fd4
@@ -1854,7 +1982,11 @@ an_jian_biao:
 	.word __anjian1	+1
 	.word __anjian2	+1
 	.word __anjian3	+1
-
+cordic_yong_cos_sin:
+	.int 0x0000,0x4000,0x2D41,0x2D41,0x3B20,0x187D,0x3EC5,0x0C7C,0x3FB1,0x0645,0x3FEC,0x0323,0x3FFB,0x0192,0x3FFE,0x00C9,0x3FFF,0x0064,0x3FFF,0x0032,0x3FFF,0x0019,0x3FFF,0x000C,0x3FFF,0x0006,0x3FFF,0x0003,0x3FFF,0x0001,0x3FFF,0x0000
+atan_biao:		@角度
+	.int 0x00168000,0x000D4853,0x000704A3,0x00039000,0x0001C9C5,0x0000E51B,0x00007295,0x0000394B,0x00001CA5,0x00000E52,0x00000729,0x00000394,0x000001CA,0x000000E5,0x00000072,0x00000039,0x0000001C,0x0000000E,0x00000007,0x00000003,0x00000001
+	.align 4
 xiaoshudian_weizhi:
 	.byte 1,2
 	.align 4
