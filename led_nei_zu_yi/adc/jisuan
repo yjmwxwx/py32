@@ -1,0 +1,7 @@
+a = -237
+b =  2087
+c=atan2(b,a)*180/3.1415926
+a1=a*cosd(c)+b*sind(c)
+b1=b*cosd(c)-a*sind(c)
+atan2(b1,a1)*180/3.14
+
