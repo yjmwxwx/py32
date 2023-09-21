@@ -1,7 +1,8 @@
 	@@ 单片机PY32F002AF15P6TU
 	@电池內阻测试仪
-	@时间：2023-07-29
+	@时间：2023-09-12
 	@编译器：ARM-NONE-EABI
+	@共阴数码管版程序
 	.thumb
 	.syntax unified
 	.section .text
@@ -2757,16 +2758,16 @@ danwei_biao:
 	.byte 0x40,0x80
 	.align 4
 yjmwxwx:
-	.ascii "yjmwxwx-20230729"
+	.ascii "yjmwxwx-20230912"
 	.align 4
 p0:
-	.int 0x8cbfc0c0
+	.int 0x73403F3F
 p1:
-	.int 0x8cbfc0f9
+	.int 0x73403F06
 p2:
-	.int 0x8cbfc0a4
+	.int 0x73403F5B
 wan:
-	.int 0xff86aba1 
+	.int 0x0079545E
 	.align 4
 jiaozhun_biao:
 	.word __qingling +1
