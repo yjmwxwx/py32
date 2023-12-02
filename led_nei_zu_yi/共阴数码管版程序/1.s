@@ -790,24 +790,21 @@ __du_jiaozhunbiao:
 	str r7, [r0, # 0x18]
 	bx lr
 
+
+
 	
 __xie_flash:
 	ldr r0, = 0x40021000
-	ldr r1, [r0, # 0x04]
 	ldr r2, = 0x1fff0f00
-	lsrs r1, r1, # 0x10
 	ldr r2, [r2, # 0x10]
-	lsls r1, r1, # 0x10
 	lsls r2, r2, # 0x13
 	lsrs r2, r2, # 0x13
-	orrs r1, r1, r2
-	movs r2, # 1
-	lsls r2, r2, # 15
-	orrs r1, r1, r2
-	str r1, [r0, # 0x04]
+	str r2, [r0, # 0x04]
+	movs r2, # 0x00
+	str r2, [r0, # 0x08]
 __deng_shizhong:
-	ldr r1, [r0, # 0x04]
-	lsls r1, r1, # 15
+	ldr r1, [r0]
+	lsls r1, r1, # 21
 	bpl __deng_shizhong
 	ldr r2, = 0x40022000   @FLASH访问控制
 	ldr r1, = 0x45670123
