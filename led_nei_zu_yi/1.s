@@ -1,6 +1,6 @@
 	@@ 单片机PY32F002AF15P6TU
 	@电池內阻测试仪
-	@时间：2023-07-29
+	@时间：2025-01-06
 	@编译器：ARM-NONE-EABI
 	.thumb
 	.syntax unified
@@ -337,13 +337,13 @@ _tongdaoxuanze:
 	ldr r1, = cos_sin_biao_1k
 	str r1, [r0]
 
-
 __huifu_chuchang:	
-	ldr r0, = 0x8000008
+	ldr r0, = 0x08
 	ldr r1, [r0]
 	ldr r2, = 0x12345678
 	cmp r2, r1
 	bne __tiaoguo_chuchang_chushihua
+__hui_fu_chu_chang:	
 	ldr r0, = chuchang_dianzu
 	ldr r1, [r0]
 	ldr r2, [r0, # 0x04]
@@ -423,6 +423,9 @@ __anjian3:
 	cmp r0, # 0
 	bne __anjian3
 __anjian3_xunhuan:
+	ldr r0, = jiaozhun_deng
+	movs r1, # 0x20
+	str r1, [r0]
         bl __xianshi_jiaozhun_caidan
 	bl __an_jian
 	cmp r0, # 1
@@ -443,7 +446,7 @@ __jiaozhun_caidan_jia_le:
 	ldr r1, [r0]
 	adds r1, r1, # 1
 	str r1, [r0]
-	cmp r1, # 3
+	cmp r1, # 4
 	bne __anjian3_fanhui
 	movs r1, # 0
 	str r1, [r0]
@@ -688,8 +691,60 @@ __shezhi_z_r_jia:
 	cmp r0, # 0
 	beq __shezhi_z_r_jiale
 	bl __shezhi_z_r_xianshi
-	b __shezhi_z_r_jia
+	ldr r0, = anjian_leijia_yanshi
+	ldr r1, [r0]
+	adds r1, r1, # 1
+	str r1, [r0]
+	ldr r2, = 0xfff
+	cmp r1,  r2
+	bne __shezhi_z_r_jia
+	movs r1, # 0
+	str r1, [r0]
+__shezhi_z_r_jiale_xunhuan:
+	bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+
+        ldr r0, = liangcheng
+        ldr r0, [r0]
+        lsls r0, r0, # 2
+        ldr r1, = chuchang_r
+        ldr r2, [r1, r0]
+        adds r2, r2, # 1
+        str r2, [r1, r0]
+	bl __an_jian
+        cmp r0, # 1
+	beq __shezhi_z_r_jiale_xunhuan
+	b __shezhi_z_r
+
+
+__shezhi_z_r_baocun:
+        b __shezhi_z_r_bao_cun
+
+
+
+	
 __shezhi_z_r_jiale:
+	ldr r0, = anjian_leijia_yanshi
+	movs r1, # 0
+	str r1, [r0]
 	ldr r0, = liangcheng
 	ldr r0, [r0]
 	lsls r0, r0, # 2
@@ -705,8 +760,56 @@ __shezhi_z_r_jian:
 	cmp r0, # 0
 	beq __shezhi_z_r_jianle
 	bl __shezhi_z_r_xianshi
-	b __shezhi_z_r_jian
+        ldr r0, = anjian_leijia_yanshi
+        ldr r1, [r0]
+        adds r1, r1, # 1
+        str r1, [r0]
+
+	ldr r2, = 0xfff
+        cmp r1,  r2
+	bne __shezhi_z_r_jian
+	movs r1, # 0
+	str r1, [r0]
+__shezhi_z_r_jianle_xunhuan:
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+        bl __shezhi_z_r_xianshi
+	ldr r0, = liangcheng
+	ldr r0, [r0]
+        lsls r0, r0, # 2
+	ldr r1, = chuchang_r
+	ldr r2, [r1, r0]
+        subs r2, r2, # 1
+	str r2, [r1, r0]
+	bl __an_jian
+	cmp r0, # 2
+        beq __shezhi_z_r_jianle_xunhuan
+	b __shezhi_z_r
+
+
+	
 __shezhi_z_r_jianle:
+        ldr r0, = anjian_leijia_yanshi
+        movs r1, # 0
+        str r1, [r0]
+
 	ldr r0, = liangcheng
 	ldr r0, [r0]
 	lsls r0, r0, # 2
@@ -716,13 +819,14 @@ __shezhi_z_r_jianle:
 	str r2, [r1, r0]
 	b __shezhi_z_r
 
-__shezhi_z_r_baocun:
+__shezhi_z_r_bao_cun:
 	ldr r0, = liangcheng
 	ldr r1, [r0]
 	adds r1, r1, # 1
 	str r1, [r0]
 	cmp r1, # 2
-	bne __shezhi_z_r
+	beq __shezhi_z_r_wan
+	b __shezhi_z_r
 __shezhi_z_r_wan:
 	movs r1, # 0
 	str r1, [r0]
@@ -761,7 +865,6 @@ __ren_wu_diao_du:
 	ldr r1, = an_jian_biao
 	ldr r2, [r1, r0]
 	mov pc, r2
-
 
 	
 ting:
@@ -2559,6 +2662,9 @@ _xieshumaguan:	 @
 	ldr r5, = shumaguanma
 	ldr r1, = danwei
 	ldr r1, [r1]
+	ldr r2, = jiaozhun_deng
+	ldr r2, [r2]
+	orrs r1, r1, r2
 	lsls r1, r1, # 8
 	ldr r2, = shumaguanshuaxinbiao
 _shumaguanshuaxin:
@@ -2704,8 +2810,8 @@ aaa:
 
 
 
-
-	
+	.equ anjian_leijia_yanshi,	0x20000f9c
+	.equ jiaozhun_deng,		0x20000fa0
 	.equ chuchang_r,		0x20000fa4
 	.equ chuchang_i,		0x20000fa8
 	.equ jiaodu_r,			0x20000fac
@@ -2756,7 +2862,7 @@ danwei_biao:
 	.byte 0x40,0x80
 	.align 4
 yjmwxwx:
-	.ascii "yjmwxwx-20230729"
+	.ascii "yjmwxwx-20250106"
 	.align 4
 p0:
 	.int 0x8cbfc0c0
@@ -2764,6 +2870,8 @@ p1:
 	.int 0x8cbfc0f9
 p2:
 	.int 0x8cbfc0a4
+p3:
+	.int 0x8cbfc0b0
 wan:
 	.int 0xff86aba1 
 	.align 4
@@ -2771,6 +2879,7 @@ jiaozhun_biao:
 	.word __qingling +1
 	.word __xiangwei +1
 	.word __z_r	 +1
+	.word __hui_fu_chu_chang +1
 	
 	.align 4
 zheng_xian_1khz:
